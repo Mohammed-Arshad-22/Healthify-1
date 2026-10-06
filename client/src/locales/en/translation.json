@@ -1,0 +1,84 @@
+{
+  "app": {
+    "name": "Healthify",
+    "tagline": "Personal Health Copilot",
+    "emergencyBadge": "Emergency Health Card",
+    "disclaimer": "Informational health platform. Not a replacement for professional medical advice."
+  },
+  "nav": {
+    "home": "Home",
+    "timeline": "Timeline",
+    "medicines": "Medicines",
+    "documents": "Documents",
+    "records": "Medical Records",
+    "trends": "Health Trends",
+    "doctors": "Doctors",
+    "caregivers": "Caregivers",
+    "abha": "ABHA / ABDM",
+    "emergency": "Emergency Card",
+    "copilot": "Health Copilot",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "profile": "Profile"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "upload": "Upload",
+    "download": "Download",
+    "search": "Search records, doctors, medicines...",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip for now",
+    "loading": "Loading...",
+    "operational": "Operational",
+    "connected": "Connected",
+    "demoMode": "Demo Mode"
+  },
+  "auth": {
+    "login": "Sign In",
+    "signup": "Create Account",
+    "phone": "Mobile Number",
+    "sendOtp": "Send OTP",
+    "verifyOtp": "Verify OTP",
+    "enterOtp": "Enter 6-digit OTP",
+    "otpSentTo": "OTP sent to",
+    "resendOtp": "Resend OTP",
+    "continueGoogle": "Continue with Google",
+    "continueApple": "Continue with Apple",
+    "email": "Email Address",
+    "password": "Password",
+    "demoLogin": "Try Instant Demo Account",
+    "logout": "Sign Out"
+  },
+  "dashboard": {
+    "greeting": "Hello",
+    "healthOverview": "Health Overview",
+    "todayMedicines": "Today's Medicines",
+    "upcomingAppointments": "Upcoming Appointments",
+    "latestReports": "Latest Reports",
+    "recentActivity": "Recent Activity",
+    "abhaStatus": "ABHA Digital Health ID",
+    "quickActions": "Quick Actions",
+    "uploadReport": "Upload Report",
+    "addMedicine": "Add Medicine",
+    "viewEmergency": "View Emergency Card",
+    "askCopilot": "Ask Health Copilot"
+  },
+  "copilot": {
+    "title": "Health Copilot",
+    "subtitle": "Your AI health intelligence companion",
+    "placeholder": "Ask about your medications, test reports, checkups...",
+    "disclaimer": "Health Copilot interprets your existing records for informational understanding only and does not diagnose medical conditions.",
+    "quickPrompts": {
+      "bloodReport": "Explain my latest blood test report",
+      "medicines": "What medicines am I taking today?",
+      "nextCheckup": "When is my next doctor consultation?",
+      "compareReports": "Compare my last two HbA1c lab tests"
+    }
+  }
+}
