@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { buildStructuredHealthProfile } from '../services/healthProfile.service.js';
 
 // Get Current User Profile
 export const getProfile = async (req, res, next) => {
@@ -134,6 +135,19 @@ export const getAccessLogs = async (req, res, next) => {
       status: 'success',
       auditLogs: user.auditLogs.slice(-50).reverse(),
       activeSessions: user.sessions,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// PHASE 7: Get Structured Health Profile
+export const getStructuredHealthProfile = async (req, res, next) => {
+  try {
+    const healthProfile = await buildStructuredHealthProfile(req.user._id);
+    res.status(200).json({
+      status: 'success',
+      health_profile: healthProfile,
     });
   } catch (err) {
     next(err);

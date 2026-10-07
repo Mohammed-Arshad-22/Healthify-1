@@ -20,32 +20,7 @@ export const NotificationsPage = () => {
     try {
       setLoading(true);
       const res = await api.get('/notifications');
-      setNotifications(res.notifications?.length ? res.notifications : [
-        {
-          _id: 'notif-1',
-          type: 'medicine_reminder',
-          title: 'Morning Medicine Reminder',
-          message: 'Time for Metformin 500mg and Telmisartan 40mg after breakfast.',
-          read: false,
-          createdAt: new Date(Date.now() - 30 * 60 * 1000),
-        },
-        {
-          _id: 'notif-2',
-          type: 'report_analyzed',
-          title: 'Lab Report Verified',
-          message: 'Comprehensive Metabolic Panel has been extracted and normalized into health trends.',
-          read: true,
-          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-        },
-        {
-          _id: 'notif-3',
-          type: 'abha_imported',
-          title: 'ABDM Health Records Linked',
-          message: 'Discovered and imported Apollo prescription via ABDM Sandbox exchange.',
-          read: true,
-          createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-        }
-      ]);
+      setNotifications(res.notifications || []);
     } catch (err) {
       console.error(err);
     } finally {

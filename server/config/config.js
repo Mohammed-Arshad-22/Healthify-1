@@ -9,8 +9,11 @@ export const config = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   mongoUri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/healthify',
   uploadDir: process.env.UPLOAD_DIR || 'uploads',
-  aiProvider: process.env.AI_PROVIDER || 'gemini',
-  aiApiKey: process.env.AI_API_KEY || '',
+  sarvamApiKey: process.env.SARVAM_API_KEY || '',
+  sarvamSttModel: process.env.SARVAM_STT_MODEL || 'saaras:v4',
+  sarvamChatModel: process.env.SARVAM_CHAT_MODEL || 'sarvam-105b',
   rateLimitWindowMs: 15 * 60 * 1000, // 15 minutes
   rateLimitMax: 300, // limit each IP to 300 requests per windowMs
 };
+
+export default config;

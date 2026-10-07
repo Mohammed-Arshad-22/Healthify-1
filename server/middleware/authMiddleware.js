@@ -8,6 +8,8 @@ export const protect = async (req, res, next) => {
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.query && req.query.token) {
+    token = req.query.token;
   }
 
   if (!token) {
@@ -52,4 +54,13 @@ export const optionalAuth = async (req, res, next) => {
     // Proceed as unauthenticated
     next();
   }
+};
+
+export const requireRole = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return next(new AppError('Access denied. You do not have permission to access this resource.', 403));
+    }
+    next();
+  };
 };

@@ -33,19 +33,7 @@ export const CaregiversPage = () => {
     try {
       setLoading(true);
       const res = await api.get('/caregivers');
-      setCaregivers(res.caregivers?.length ? res.caregivers : [
-        {
-          _id: 'cg-01',
-          name: 'Priya Kumar',
-          relationship: 'Spouse',
-          phone: '+91 98765 11223',
-          email: 'priya.k@example.com',
-          permissionLevel: 'full_view',
-          status: 'active',
-          consentGrantedAt: '2026-09-01',
-          expiresAt: '2027-09-01',
-        }
-      ]);
+      setCaregivers(res.caregivers || []);
     } catch (err) {
       console.error(err);
     } finally {

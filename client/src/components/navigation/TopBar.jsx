@@ -68,7 +68,7 @@ export const TopBar = ({ onToggleSidebar, user, onLogout }) => {
             title="Immediate Access Emergency Health Card"
           >
             <ShieldAlert className="w-4 h-4 text-rose-600 animate-pulse" />
-            <span className="hidden sm:inline">Emergency Card</span>
+            <span className="hidden sm:inline">{t('nav.emergency')}</span>
             <span className="sm:hidden">SOS</span>
           </Link>
 

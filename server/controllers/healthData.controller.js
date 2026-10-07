@@ -8,6 +8,9 @@ import Notification from '../models/Notification.js';
 import Document from '../models/Document.js';
 import User from '../models/User.js';
 import { aiService } from '../services/ai.service.js';
+import { retrievalService } from '../services/retrieval.service.js';
+import { copilotService } from '../services/copilot.service.js';
+import { syncAllAnalyzedDocumentsForUser } from '../services/documentSync.service.js';
 import { AppError } from '../middleware/errorHandler.js';
 
 // ==========================================
@@ -15,6 +18,9 @@ import { AppError } from '../middleware/errorHandler.js';
 // ==========================================
 export const getHealthRecords = async (req, res, next) => {
   try {
+    // Automatically guarantee any analyzed documents are synced to health records
+    await syncAllAnalyzedDocumentsForUser(req.user._id);
+
     const { type, search, sort = '-date' } = req.query;
     const filter = { userId: req.user._id };
 
@@ -64,10 +70,26 @@ export const createHealthRecord = async (req, res, next) => {
   }
 };
 
+export const getHealthRecordById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const record = await HealthRecord.findOne({ _id: id, userId: req.user._id });
+    if (!record) {
+      return next(new AppError('Health record not found or unauthorized.', 404));
+    }
+    res.status(200).json({ status: 'success', record });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const deleteHealthRecord = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await HealthRecord.findOneAndDelete({ _id: id, userId: req.user._id });
+    const record = await HealthRecord.findOneAndDelete({ _id: id, userId: req.user._id });
+    if (!record) {
+      return next(new AppError('Health record not found or unauthorized.', 404));
+    }
     res.status(200).json({ status: 'success', message: 'Record deleted.' });
   } catch (err) {
     next(err);
@@ -81,6 +103,19 @@ export const getMedications = async (req, res, next) => {
   try {
     const medications = await Medication.find({ userId: req.user._id }).sort({ status: 1, createdAt: -1 });
     res.status(200).json({ status: 'success', count: medications.length, medications });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getMedicationById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const medication = await Medication.findOne({ _id: id, userId: req.user._id });
+    if (!medication) {
+      return next(new AppError('Medication not found or unauthorized.', 404));
+    }
+    res.status(200).json({ status: 'success', medication });
   } catch (err) {
     next(err);
   }
@@ -150,6 +185,18 @@ export const toggleMedicationStatus = async (req, res, next) => {
   }
 };
 
+export const deleteMedication = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const med = await Medication.findOneAndDelete({ _id: id, userId: req.user._id });
+    if (!med) return next(new AppError('Medication not found or unauthorized.', 404));
+
+    res.status(200).json({ status: 'success', message: 'Medication removed.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // ==========================================
 // 3. LAB TRENDS & CHARTS (Phase 12)
 // ==========================================
@@ -176,16 +223,26 @@ export const getLabTrends = async (req, res, next) => {
 
 export const addLabMetric = async (req, res, next) => {
   try {
-    const { metricName, value, unit, date, notes } = req.body;
+    const { metricName, value, unit, date, notes, status: customStatus, referenceMin, referenceMax } = req.body;
     if (!metricName || value === undefined) {
       return next(new AppError('Metric name and value are required.', 400));
+    }
+
+    const numVal = Number(value);
+    let resolvedStatus = customStatus || 'normal';
+    if (!customStatus && referenceMin !== undefined && referenceMax !== undefined) {
+      if (numVal > Number(referenceMax)) resolvedStatus = 'high';
+      else if (numVal < Number(referenceMin)) resolvedStatus = 'low';
     }
 
     const metric = new LabMetric({
       userId: req.user._id,
       metricName,
-      value: Number(value),
+      value: numVal,
       unit: unit || 'mg/dL',
+      referenceMin: referenceMin !== undefined ? Number(referenceMin) : undefined,
+      referenceMax: referenceMax !== undefined ? Number(referenceMax) : undefined,
+      status: resolvedStatus,
       date: date ? new Date(date) : new Date(),
       notes: notes || '',
     });
@@ -228,6 +285,18 @@ export const createDoctor = async (req, res, next) => {
   }
 };
 
+export const deleteDoctor = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const doc = await Doctor.findOneAndDelete({ _id: id, userId: req.user._id });
+    if (!doc) return next(new AppError('Doctor record not found or unauthorized.', 404));
+
+    res.status(200).json({ status: 'success', message: 'Doctor contact removed.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getAppointments = async (req, res, next) => {
   try {
     const appointments = await Appointment.find({ userId: req.user._id }).sort({ date: 1 });
@@ -252,6 +321,18 @@ export const createAppointment = async (req, res, next) => {
     });
     await appt.save();
     res.status(201).json({ status: 'success', appointment: appt });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteAppointment = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const appt = await Appointment.findOneAndDelete({ _id: id, userId: req.user._id });
+    if (!appt) return next(new AppError('Appointment not found or unauthorized.', 404));
+
+    res.status(200).json({ status: 'success', message: 'Appointment removed.' });
   } catch (err) {
     next(err);
   }
@@ -456,32 +537,71 @@ export const importAbhaRecords = async (req, res, next) => {
 // ==========================================
 export const askHealthCopilot = async (req, res, next) => {
   try {
-    const { query, language = 'en' } = req.body;
+    const rawQuery = req.body?.query || req.body?.question || req.body?.message || req.query?.query || req.query?.q;
+    const query = typeof rawQuery === 'string' ? rawQuery.trim() : '';
     if (!query) {
       return next(new AppError('Please provide a health inquiry question.', 400));
     }
 
-    // Retrieve user authorized context
-    const medications = await Medication.find({ userId: req.user._id, status: 'active' });
-    const labMetrics = await LabMetric.find({ userId: req.user._id }).sort({ date: -1 });
-    const records = await HealthRecord.find({ userId: req.user._id }).sort({ date: -1 }).limit(10);
+    const { language = 'en', history = [] } = req.body || {};
+    const documentId = req.body?.document_id || req.body?.documentId || req.query?.document_id || req.query?.doc || null;
+    const documentType = req.body?.document_type || req.body?.documentType || null;
+    const mode = req.body?.mode || null;
 
-    const userContext = {
-      medications,
-      labMetrics,
-      records,
-      user: req.user,
-    };
-
-    const copilotResult = await aiService.processCopilotQuery({
+    const copilotResult = await copilotService.processQuery({
       query,
-      userContext,
+      userId: req.user._id,
+      user: req.user,
       language: language || req.user.preferredLanguage || 'en',
+      history,
+      documentId,
+      document_id: documentId,
+      documentType,
+      mode,
     });
 
     res.status(200).json({
       status: 'success',
       ...copilotResult,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ==========================================
+// 7b. PHASE 8: RETRIEVAL FOUNDATION QUERY
+// ==========================================
+export const retrieveCopilotData = async (req, res, next) => {
+  try {
+    const { query, document_type, limit, mode } = req.body;
+    if (!query) {
+      return next(new AppError('Please provide a health inquiry query for retrieval.', 400));
+    }
+
+    if (mode === 'vector_search_only') {
+      const vectorResults = await retrievalService.performMetadataFilteredVectorSearch({
+        userId: req.user._id,
+        query,
+        documentType: document_type || null,
+        topK: limit || 5,
+      });
+      return res.status(200).json({
+        status: 'success',
+        results: vectorResults,
+      });
+    }
+
+    const retrievalResult = await retrievalService.retrieve({
+      query,
+      userId: req.user._id,
+      requestedDocumentType: document_type || null,
+      limit: limit || 8,
+    });
+
+    res.status(200).json({
+      status: 'success',
+      ...retrievalResult,
     });
   } catch (err) {
     next(err);
@@ -498,16 +618,16 @@ export const getEmergencyProfile = async (req, res) => {
     emergency: {
       name: user.name,
       age: user.age,
-      bloodGroup: user.bloodGroup || 'O+',
+      bloodGroup: user.bloodGroup || '',
       emergencyContacts: user.emergencyContacts || [],
-      criticalAllergies: user.criticalAllergies || ['Penicillin (Anaphylaxis risk)'],
-      criticalConditions: user.criticalConditions || ['Type 2 Diabetes', 'Hypertension'],
-      importantMedicines: user.importantMedicines || ['Metformin 500mg', 'Telmisartan 40mg'],
-      primaryDoctorName: user.primaryDoctorName || 'Dr. Ramesh Sharma',
-      primaryDoctorPhone: user.primaryDoctorPhone || '+91 98400 12345',
-      lastCheckupDate: user.lastCheckupDate,
-      abhaNumber: user.abhaNumber,
-      tollFreeAssistanceNumber: '1800-889-CARE (Placeholder Demo)',
+      criticalAllergies: user.criticalAllergies || [],
+      criticalConditions: user.criticalConditions || [],
+      importantMedicines: user.importantMedicines || [],
+      primaryDoctorName: user.primaryDoctorName || '',
+      primaryDoctorPhone: user.primaryDoctorPhone || '',
+      lastCheckupDate: user.lastCheckupDate || null,
+      abhaNumber: user.abhaNumber || '',
+      tollFreeAssistanceNumber: '1800-889-CARE',
     },
   });
 };
@@ -516,6 +636,10 @@ export const getEmergencyProfile = async (req, res) => {
 export const getPublicEmergencyCard = async (req, res, next) => {
   try {
     const { userId } = req.params;
+    if (!userId || userId === 'demo_user' || userId === 'not_available' || userId.length !== 24) {
+      return next(new AppError('Emergency record not found or link is invalid.', 404));
+    }
+
     const user = await User.findById(userId);
     if (!user) {
       return next(new AppError('Emergency record not found or expired.', 404));
@@ -536,16 +660,16 @@ export const getPublicEmergencyCard = async (req, res, next) => {
       emergencyCard: {
         patientName: user.name,
         age: user.age,
-        bloodGroup: user.bloodGroup || 'O+',
-        emergencyContacts: user.emergencyContacts,
-        criticalAllergies: user.criticalAllergies,
-        criticalConditions: user.criticalConditions,
-        importantMedicines: user.importantMedicines,
+        bloodGroup: user.bloodGroup || 'Not specified',
+        emergencyContacts: user.emergencyContacts || [],
+        criticalAllergies: user.criticalAllergies || [],
+        criticalConditions: user.criticalConditions || [],
+        importantMedicines: user.importantMedicines || [],
         primaryDoctor: {
-          name: user.primaryDoctorName,
-          phone: user.primaryDoctorPhone,
+          name: user.primaryDoctorName || '',
+          phone: user.primaryDoctorPhone || '',
         },
-        emergencyTollFree: '1800-889-CARE (Demo)',
+        emergencyTollFree: '1800-889-CARE',
       },
     });
   } catch (err) {

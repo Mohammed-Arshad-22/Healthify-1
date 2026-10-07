@@ -15,6 +15,9 @@ import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import documentRoutes from './routes/document.routes.js';
 import healthDataRoutes from './routes/healthData.routes.js';
+import doctorRoutes from './routes/doctor.routes.js';
+import labRoutes from './routes/lab.routes.js';
+import fhirRoutes from './routes/fhir.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -69,6 +72,9 @@ app.use('/api', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/documents', documentRoutes);
+app.use('/api/doctor', doctorRoutes);
+app.use('/api/lab', labRoutes);
+app.use('/api/fhir', fhirRoutes);
 app.use('/api', healthDataRoutes);
 
 // 8. 404 Route handler

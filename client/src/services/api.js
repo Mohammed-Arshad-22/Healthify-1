@@ -90,6 +90,61 @@ class ApiClient {
       isFormData: true,
     });
   }
+
+  uploadWithProgress(endpoint, formData, onProgress = () => {}, options = {}) {
+    const url = `${this.baseUrl}${endpoint}`;
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open(options.method || 'POST', url);
+
+      const token = localStorage.getItem('healthify_token');
+      if (token) {
+        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+      }
+
+      if (options.headers) {
+        Object.entries(options.headers).forEach(([k, v]) => {
+          xhr.setRequestHeader(k, v);
+        });
+      }
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percent = Math.round((event.loaded * 100) / event.total);
+          onProgress(percent);
+        }
+      };
+
+      xhr.onload = () => {
+        let data = {};
+        try {
+          data = JSON.parse(xhr.responseText);
+        } catch {
+          data = {};
+        }
+
+        if (xhr.status >= 200 && xhr.status < 300) {
+          onProgress(100);
+          resolve(data);
+        } else {
+          if (xhr.status === 401) {
+            localStorage.removeItem('healthify_token');
+            window.dispatchEvent(new Event('healthify_auth_change'));
+          }
+          const error = new Error(data.message || `Upload failed with status ${xhr.status}`);
+          error.status = xhr.status;
+          error.details = data.details || null;
+          reject(error);
+        }
+      };
+
+      xhr.onerror = () => {
+        reject(new Error('Network error during upload. Please check your connection.'));
+      };
+
+      xhr.send(formData);
+    });
+  }
 }
 
 export const api = new ApiClient(API_BASE_URL);

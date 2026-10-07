@@ -37,11 +37,18 @@
     "loading": "Loading...",
     "operational": "Operational",
     "connected": "Connected",
-    "demoMode": "Demo Mode"
+    "demoMode": "Demo Mode",
+    "all": "All",
+    "status": "Status",
+    "date": "Date",
+    "actions": "Actions",
+    "close": "Close"
   },
   "auth": {
     "login": "Sign In",
     "signup": "Create Account",
+    "patientLogin": "Patient Portal",
+    "doctorLogin": "Doctor Portal",
     "phone": "Mobile Number",
     "sendOtp": "Send OTP",
     "verifyOtp": "Verify OTP",
@@ -52,8 +59,13 @@
     "continueApple": "Continue with Apple",
     "email": "Email Address",
     "password": "Password",
+    "fullName": "Full Name",
+    "specialization": "Specialization",
+    "clinicHospital": "Clinic / Hospital Name",
+    "registrationNumber": "Medical Council Reg. Number",
     "demoLogin": "Try Instant Demo Account",
-    "logout": "Sign Out"
+    "logout": "Sign Out",
+    "verificationPending": "Verification Pending"
   },
   "dashboard": {
     "greeting": "Hello",
@@ -67,18 +79,120 @@
     "uploadReport": "Upload Report",
     "addMedicine": "Add Medicine",
     "viewEmergency": "View Emergency Card",
-    "askCopilot": "Ask Health Copilot"
+    "askCopilot": "Ask Health Copilot",
+    "cleanAccount": "Your health profile is ready.",
+    "noRecordsYet": "No health records uploaded yet.",
+    "noMedicinesYet": "No medications scheduled.",
+    "noAppointmentsYet": "No upcoming doctor appointments scheduled."
+  },
+  "medicines": {
+    "title": "Medicines & Prescriptions",
+    "subtitle": "Track adherence, daily schedules, and refill reminders",
+    "addMedicine": "Add Medicine",
+    "medicineName": "Medicine Name",
+    "dosage": "Dosage (e.g. 500mg)",
+    "frequency": "Frequency",
+    "instructions": "Instructions",
+    "prescribedBy": "Prescribed By Doctor",
+    "active": "Active",
+    "paused": "Paused",
+    "completed": "Completed",
+    "taken": "Mark as Taken",
+    "missed": "Missed",
+    "emptyState": "No active medicines found.",
+    "emptyStateDesc": "Add your prescribed medicines or upload a prescription to automatically track doses.",
+    "deleteConfirm": "Are you sure you want to remove this medication?"
+  },
+  "documents": {
+    "title": "Medical Documents & Reports",
+    "subtitle": "Secure clinical storage, OCR extraction, and verified reports",
+    "uploadDoc": "Upload Document",
+    "dragDrop": "Drag and drop your medical report or prescription here",
+    "supportedFormats": "Supports PDF, JPG, and PNG files up to 15MB",
+    "allCategories": "All Categories",
+    "prescriptions": "Prescriptions",
+    "labReports": "Laboratory Reports",
+    "diagnostic": "Diagnostic Reports",
+    "discharge": "Discharge Summaries",
+    "emptyState": "No documents uploaded yet.",
+    "emptyStateDesc": "Upload your lab reports, prescriptions, or imaging files to keep them organized and accessible to Copilot.",
+    "verifyExtraction": "Verify Extracted Data",
+    "verifiedBadge": "Clinically Verified",
+    "needsReview": "Needs Verification"
+  },
+  "records": {
+    "title": "Medical Records",
+    "subtitle": "Unified longitudinal clinical record across all encounters",
+    "addRecord": "Add Health Record",
+    "recordType": "Record Type",
+    "doctor": "Doctor",
+    "hospital": "Hospital / Clinic",
+    "diagnosis": "Diagnosis / Notes",
+    "emptyState": "No health records found.",
+    "emptyStateDesc": "Your health records will automatically populate as you verify uploaded documents or add clinical entries."
+  },
+  "timeline": {
+    "title": "Health Timeline",
+    "subtitle": "Chronological history of lab tests, prescriptions, and doctor visits",
+    "emptyState": "Your health timeline will appear here.",
+    "emptyStateDesc": "Add medications or upload lab reports to build your personal health history."
+  },
+  "doctors": {
+    "title": "My Doctors & Clinicians",
+    "subtitle": "Manage treating physicians and consent-based record sharing",
+    "addDoctor": "Add Doctor",
+    "shareRecords": "Share Records",
+    "revokeAccess": "Revoke Access",
+    "emptyState": "No doctors added yet.",
+    "emptyStateDesc": "Add your primary physicians or specialists to organize consultations and share authorized records."
+  },
+  "caregivers": {
+    "title": "Caregivers & Family Access",
+    "subtitle": "Delegated health access with granular read/write consent controls",
+    "addCaregiver": "Add Caregiver",
+    "relationship": "Relationship",
+    "emptyState": "No caregivers assigned.",
+    "emptyStateDesc": "Authorize family members or trusted caregivers to monitor medications and view emergency cards."
+  },
+  "emergency": {
+    "title": "Emergency Health Card",
+    "subtitle": "Instantly accessible clinical summary for first responders and paramedics",
+    "criticalAllergies": "Critical Allergies",
+    "chronicConditions": "Chronic Conditions",
+    "bloodGroup": "Blood Group",
+    "emergencyContacts": "Emergency Contacts",
+    "qrCode": "Emergency QR Code",
+    "scanPrompt": "Scan with any smartphone camera for rapid responder emergency data",
+    "printCard": "Print Card",
+    "shareCard": "Share Link"
   },
   "copilot": {
     "title": "Health Copilot",
     "subtitle": "Your AI health intelligence companion",
     "placeholder": "Ask about your medications, test reports, checkups...",
     "disclaimer": "Health Copilot interprets your existing records for informational understanding only and does not diagnose medical conditions.",
+    "listening": "Listening...",
+    "stopListening": "Stop & Transcribe",
+    "processing": "Processing transcription with Sarvam Saaras v4...",
+    "readResponse": "Read response aloud",
+    "stopReading": "Stop audio",
+    "uploadPrompt": "Upload medical report or prescription (PDF, JPG, PNG)",
+    "cameraPrompt": "Take photo of report or prescription",
+    "youSaid": "Transcribed voice query:",
+    "sendQuery": "Send to Copilot",
     "quickPrompts": {
       "bloodReport": "Explain my latest blood test report",
       "medicines": "What medicines am I taking today?",
       "nextCheckup": "When is my next doctor consultation?",
-      "compareReports": "Compare my last two HbA1c lab tests"
+      "whatToAsk": "What should I ask my doctor about my health?"
     }
+  },
+  "settings": {
+    "title": "Settings & Preferences",
+    "language": "Application Language",
+    "voiceAssistance": "Voice Assistance",
+    "accessibility": "Accessibility Options",
+    "theme": "Appearance Theme",
+    "privacy": "Data Privacy & Consent"
   }
 }

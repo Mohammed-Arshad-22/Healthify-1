@@ -48,32 +48,7 @@ export const TrendsPage = () => {
     try {
       setLoading(true);
       const res = await api.get(`/trends?metric=${encodeURIComponent(selectedMetric)}`);
-      
-      // If no points in db for demo, inject baseline realistic clinical points so chart is beautiful
-      let points = res.metrics || [];
-      if (points.length === 0) {
-        if (selectedMetric === 'HbA1c') {
-          points = [
-            { date: '2026-03-10', value: 7.9, unit: '%' },
-            { date: '2026-06-14', value: 7.5, unit: '%' },
-            { date: '2026-09-18', value: 7.2, unit: '%' },
-          ];
-        } else if (selectedMetric === 'Blood Pressure - Systolic') {
-          points = [
-            { date: '2026-06-12', value: 148, unit: 'mmHg' },
-            { date: '2026-08-01', value: 142, unit: 'mmHg' },
-            { date: '2026-09-18', value: 138, unit: 'mmHg' },
-          ];
-        } else if (selectedMetric === 'Fasting Blood Glucose') {
-          points = [
-            { date: '2026-07-20', value: 165, unit: 'mg/dL' },
-            { date: '2026-08-25', value: 154, unit: 'mg/dL' },
-            { date: '2026-09-18', value: 142, unit: 'mg/dL' },
-          ];
-        }
-      }
-
-      setMetricData(points);
+      setMetricData(res.metrics || []);
       setAvailableMetrics(res.availableMetrics?.length ? res.availableMetrics : standardMetrics.map(m => m.name));
     } catch (err) {
       console.error(err);
@@ -123,16 +98,25 @@ export const TrendsPage = () => {
           </p>
         </div>
 
-        <Button
-          variant="primary"
-          onClick={() => {
-            setNewLog(prev => ({ ...prev, metricName: selectedMetric, unit: currentMetricDef.unit }));
-            setShowLogModal(true);
-          }}
-          leftIcon={<Plus className="w-4 h-4" />}
-        >
-          Log Reading
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => navigate('/laboratory')}
+            leftIcon={<Activity className="w-4 h-4 text-teal-600" />}
+          >
+            Lab Dashboard
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setNewLog(prev => ({ ...prev, metricName: selectedMetric, unit: currentMetricDef.unit }));
+              setShowLogModal(true);
+            }}
+            leftIcon={<Plus className="w-4 h-4" />}
+          >
+            Log Reading
+          </Button>
+        </div>
       </div>
 
       {/* Metric Select Buttons */}

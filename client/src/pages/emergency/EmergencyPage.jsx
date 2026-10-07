@@ -53,17 +53,17 @@ export const EmergencyPage = () => {
       let answer = '';
 
       if (qLower.includes('blood')) {
-        answer = `Your recorded blood group is ${emergencyData?.bloodGroup || 'O Positive'}.`;
+        answer = emergencyData?.bloodGroup ? `Your recorded blood group is ${emergencyData.bloodGroup}.` : 'No blood group recorded in profile.';
       } else if (qLower.includes('medicine')) {
-        answer = `Your registered life-sustaining medicines are: ${(emergencyData?.importantMedicines || []).join(', ')}.`;
+        answer = emergencyData?.importantMedicines?.length ? `Your registered life-sustaining medicines are: ${emergencyData.importantMedicines.join(', ')}.` : 'No critical medicines listed in emergency profile.';
       } else if (qLower.includes('allerg')) {
-        answer = `Critical recorded allergies: ${(emergencyData?.criticalAllergies || []).join(', ')}.`;
+        answer = emergencyData?.criticalAllergies?.length ? `Critical recorded allergies: ${emergencyData.criticalAllergies.join(', ')}.` : 'No critical allergies recorded.';
       } else if (qLower.includes('doctor')) {
-        answer = `Your primary treating doctor is ${emergencyData?.primaryDoctorName || 'Dr. Ramesh Sharma'}, contact number: ${emergencyData?.primaryDoctorPhone || '+91 98400 12345'}.`;
+        answer = emergencyData?.primaryDoctorName ? `Your primary treating doctor is ${emergencyData.primaryDoctorName}${emergencyData.primaryDoctorPhone ? `, contact: ${emergencyData.primaryDoctorPhone}` : ''}.` : 'No primary doctor registered.';
       } else if (qLower.includes('checkup')) {
-        answer = `Your last recorded doctor checkup was on September 15, 2026.`;
+        answer = emergencyData?.lastCheckupDate ? `Your last recorded doctor checkup was on ${new Date(emergencyData.lastCheckupDate).toLocaleDateString()}.` : 'No checkup date registered.';
       } else {
-        answer = `Emergency Voice System: You are listening to the Healthify emergency line for ${emergencyData?.name}. For immediate assistance call 112 or contact ${emergencyData?.emergencyContacts?.[0]?.phone}.`;
+        answer = `Emergency Voice System: You are listening to the Healthify emergency line for ${emergencyData?.name || 'patient'}. ${emergencyData?.emergencyContacts?.[0]?.phone ? `Primary contact: ${emergencyData.emergencyContacts[0].phone}` : 'For immediate assistance call 112.'}`;
       }
 
       setTollFreeAnswer(answer);
@@ -71,7 +71,7 @@ export const EmergencyPage = () => {
     }, 700);
   };
 
-  const emergencyQrUrl = `${window.location.origin}/emergency/view/demo_user`;
+  const emergencyQrUrl = `${window.location.origin}/emergency/view/${user?._id || 'demo_user'}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(emergencyQrUrl);
@@ -190,7 +190,7 @@ export const EmergencyPage = () => {
                     Primary Doctor & Clinic
                   </span>
                   <p className="text-xs font-semibold text-slate-900">
-                    {emergencyData?.primaryDoctorName || 'Dr. Ramesh Sharma'} &bull; {emergencyData?.primaryDoctorPhone || '+91 98400 12345'}
+                    {emergencyData?.primaryDoctorName ? `${emergencyData.primaryDoctorName} • ${emergencyData.primaryDoctorPhone || 'Phone not registered'}` : 'No primary doctor registered'}
                   </p>
                 </div>
 
@@ -201,25 +201,28 @@ export const EmergencyPage = () => {
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">
                   Immediate Family Emergency Contacts
                 </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {(emergencyData?.emergencyContacts?.length ? emergencyData.emergencyContacts : [
-                    { name: 'Priya Kumar', relationship: 'Spouse', phone: '+91 98765 11223', isPrimary: true },
-                    { name: 'Rajesh Kumar', relationship: 'Brother', phone: '+91 98765 33445', isPrimary: false },
-                  ]).map((contact, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-                      <div>
-                        <span className="font-bold text-slate-900">{contact.name}</span>
-                        <span className="text-slate-500 ml-1.5">({contact.relationship})</span>
+                {(!emergencyData?.emergencyContacts || emergencyData.emergencyContacts.length === 0) ? (
+                  <p className="text-xs text-slate-500 italic p-3 bg-slate-50 rounded-xl border border-dashed">
+                    No emergency contacts added yet. Add family or caregiver contacts below.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {emergencyData.emergencyContacts.map((contact, i) => (
+                      <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+                        <div>
+                          <span className="font-bold text-slate-900">{contact.name}</span>
+                          <span className="text-slate-500 ml-1.5">({contact.relationship})</span>
+                        </div>
+                        <a
+                          href={`tel:${contact.phone}`}
+                          className="font-mono font-bold text-teal-700 hover:underline flex items-center gap-1"
+                        >
+                          <Phone className="w-3 h-3" /> {contact.phone}
+                        </a>
                       </div>
-                      <a
-                        href={`tel:${contact.phone}`}
-                        className="font-mono font-bold text-teal-700 hover:underline flex items-center gap-1"
-                      >
-                        <Phone className="w-3 h-3" /> {contact.phone}
-                      </a>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Strict Scoping Privacy Note */}

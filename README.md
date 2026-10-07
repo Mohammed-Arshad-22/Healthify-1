@@ -92,7 +92,30 @@ The frontend will start at `http://localhost:5173`.
 
 ---
 
+## ☁️ Deploying to Vercel
+
+Healthify is configured for immediate deployment to [Vercel](https://vercel.com):
+
+### Option 1: Deploy from Root (Recommended)
+1. Import this repository into Vercel.
+2. Keep the **Root Directory** as `./` (default).
+3. Vercel will automatically use `vercel.json` (`npm run build --prefix client` and output `client/dist`).
+4. In **Environment Variables**, set:
+   - `VITE_API_URL`: Your backend API URL (e.g., `https://your-healthify-backend.onrender.com/api`)
+5. Click **Deploy**.
+
+### Option 2: Deploy with Root Directory set to `client`
+1. Import this repository into Vercel.
+2. In Project Settings, set **Root Directory** to `client`.
+3. Framework Preset: **Vite**.
+4. In **Environment Variables**, set:
+   - `VITE_API_URL`: Your backend API URL.
+5. Click **Deploy**. Single-page app routing (preventing 404s on page refresh) is handled automatically via `client/vercel.json`.
+
+---
+
 ## 🔒 Security & Privacy
 - Zero hardcoded API keys; all configuration managed via `.env`.
 - Explicit user consent history and access logs for all doctor/caregiver sharing.
 - Strict emergency mode scoping: only vital signs, critical allergies, and emergency contacts are shared via Emergency QR cards.
+

@@ -42,6 +42,19 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const handleAuthSuccess = (data) => {
+    // Clear any previous session/account cached data
+    try {
+      sessionStorage.clear();
+      // Remove any lingering cached copilot or form drafts
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('copilot_') || key.startsWith('draft_')) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (e) {
+      // ignore storage errors
+    }
+
     if (data.token) {
       localStorage.setItem('healthify_token', data.token);
       setToken(data.token);
@@ -74,6 +87,16 @@ export const AuthProvider = ({ children }) => {
     return handleAuthSuccess(data);
   };
 
+  const loginDoctor = async (email, password) => {
+    const data = await api.post('/auth/doctor/login', { email, password });
+    return handleAuthSuccess(data);
+  };
+
+  const registerDoctor = async (payload) => {
+    const data = await api.post('/auth/doctor/register', payload);
+    return handleAuthSuccess(data);
+  };
+
   const socialLogin = async (provider, email, name) => {
     const data = await api.post('/auth/social', { provider, email, name });
     return handleAuthSuccess(data);
@@ -93,8 +116,19 @@ export const AuthProvider = ({ children }) => {
       // Ignore network errors on logout
     } finally {
       localStorage.removeItem('healthify_token');
+      try {
+        sessionStorage.clear();
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('copilot_') || key.startsWith('draft_')) {
+            localStorage.removeItem(key);
+          }
+        });
+      } catch (e) {
+        // ignore
+      }
       setToken(null);
       setUser(null);
+      window.dispatchEvent(new Event('healthify_auth_change'));
     }
   };
 
@@ -108,11 +142,14 @@ export const AuthProvider = ({ children }) => {
         user,
         token,
         isAuthenticated: Boolean(user && token),
+        isDoctor: user?.role === 'doctor',
         loading,
         sendOtp,
         verifyOtp,
         loginWithEmail,
         registerWithEmail,
+        loginDoctor,
+        registerDoctor,
         socialLogin,
         loginAsDemo,
         logout,

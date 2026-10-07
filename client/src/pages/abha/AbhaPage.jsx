@@ -70,7 +70,7 @@ export const AbhaPage = () => {
       const res = await api.post('/abha/demo/import', { selectedRecordIds: selectedRecords });
       setFeedback({ 
         type: 'success', 
-        message: `${res.importedRecords.length} records mapped into FHIR standard and imported to your health timeline!` 
+        message: `${res.importedRecords.length} records imported into your personal health timeline!` 
       });
     } catch (err) {
       setFeedback({ type: 'danger', message: err.message || 'Import failed.' });
@@ -153,13 +153,13 @@ export const AbhaPage = () => {
           <div>
             <h3 className="text-base font-bold text-slate-900">ABHA Digital Health Locker</h3>
             <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-              When connected to accredited hospitals and diagnostic centers, you can discover existing diagnostic reports and convert them into FHIR standards.
+              When connected to accredited hospitals and diagnostic centers, you can discover existing diagnostic reports and import them directly.
             </p>
 
             <div className="mt-4 space-y-2 text-xs">
               <div className="flex items-center gap-2 text-slate-700">
                 <CheckCircle2 className="w-4 h-4 text-teal-600 flex-shrink-0" />
-                <span>Interoperable FHIR Resource mapping</span>
+                <span>Standardized digital medical records</span>
               </div>
               <div className="flex items-center gap-2 text-slate-700">
                 <CheckCircle2 className="w-4 h-4 text-teal-600 flex-shrink-0" />
@@ -235,7 +235,7 @@ export const AbhaPage = () => {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-bold text-slate-900">{item.hospitalName}</span>
                     <Badge variant="teal" size="sm">{item.type}</Badge>
-                    <Badge variant="neutral" size="sm">FHIR: {item.fhirResourceType}</Badge>
+                    <Badge variant="neutral" size="sm">Available</Badge>
                   </div>
 
                   <p className="text-xs text-slate-600 font-medium mt-1">

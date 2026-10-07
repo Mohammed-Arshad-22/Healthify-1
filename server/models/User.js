@@ -43,6 +43,13 @@ const UserSchema = new mongoose.Schema({
   otpExpiresAt: { type: Date, select: false },
   role: { type: String, enum: ['patient', 'caregiver', 'doctor', 'admin'], default: 'patient' },
 
+  // 2.1 Doctor Professional Profile (Phases 3-6)
+  specialization: { type: String, trim: true, default: '' },
+  professionalDesignation: { type: String, trim: true, default: '' },
+  clinicHospital: { type: String, trim: true, default: '' },
+  registrationNumber: { type: String, trim: true, default: '' },
+  verificationStatus: { type: String, enum: ['verified', 'pending', 'rejected'], default: 'pending' },
+
   // 3. Health Profile
   bloodGroup: { 
     type: String, 

@@ -14,6 +14,8 @@ import {
   Bell, 
   Settings,
   FolderHeart,
+  Activity,
+  Share2,
   X
 } from 'lucide-react';
 import { useTranslation } from '../../context/LanguageContext';
@@ -28,6 +30,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
     { to: '/timeline', label: t('nav.timeline'), icon: <Clock className="w-4 h-4" /> },
     { to: '/medicines', label: t('nav.medicines'), icon: <Pill className="w-4 h-4" /> },
     { to: '/trends', label: t('nav.trends'), icon: <TrendingUp className="w-4 h-4" /> },
+    { to: '/laboratory', label: 'Lab Dashboard', icon: <Activity className="w-4 h-4 text-teal-600" /> },
     { to: '/doctors', label: t('nav.doctors'), icon: <UserCheck className="w-4 h-4" /> },
     { to: '/caregivers', label: t('nav.caregivers'), icon: <Users className="w-4 h-4" /> },
     { to: '/abha', label: t('nav.abha'), icon: <QrCode className="w-4 h-4" />, highlight: 'demo' },

@@ -51,14 +51,14 @@ export const SettingsPage = () => {
     downloadAnchor.remove();
 
     setShowExportModal(false);
-    setFeedback('Health records exported successfully as JSON!');
+    setFeedback('Health records exported successfully!');
     setTimeout(() => setFeedback(''), 4000);
   };
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Platform Settings</h1>
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{t('settings.title')}</h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
           Language options, accessibility preferences, data portability & security controls.
         </p>
@@ -218,8 +218,8 @@ export const SettingsPage = () => {
       <Dialog
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}
-        title="Export Personal Health Bundle"
-        description="This bundle contains your longitudinal diagnostic results, medications, and clinical summaries formatted according to FHIR guidelines."
+        title="Export Personal Health Records"
+        description="This download contains your diagnostic results, medications, and clinical summaries formatted for easy portability."
       >
         <div className="space-y-4 pt-2">
           <p className="text-xs text-slate-600">
