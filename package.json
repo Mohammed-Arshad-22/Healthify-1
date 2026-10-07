@@ -1,0 +1,24 @@
+{
+  "name": "healthify",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Healthify - Personal AI Health Copilot & Medical Records Platform",
+  "scripts": {
+    "build": "npm run build --prefix client",
+    "start": "node server/server.js",
+    "dev": "npm run dev --prefix client",
+    "dev:client": "npm run dev --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "test": "npm test --prefix server"
+  },
+  "keywords": [
+    "healthcare",
+    "ai-copilot",
+    "medical-records",
+    "mern",
+    "vite",
+    "react"
+  ],
+  "author": "Healthify Team",
+  "license": "MIT"
+}
