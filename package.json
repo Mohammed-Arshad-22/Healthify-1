@@ -4,6 +4,7 @@
   "private": true,
   "description": "Healthify - Personal AI Health Copilot & Medical Records Platform",
   "scripts": {
+    "postinstall": "npm install --prefix client",
     "build": "npm run build --prefix client",
     "start": "node server/server.js",
     "dev": "npm run dev --prefix client",
